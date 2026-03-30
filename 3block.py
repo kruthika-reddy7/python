@@ -1,48 +1,48 @@
 import hashlib
 import time
+import random
+# Simulating IoT Nodes
+nodes = ["Node1", "Node2", "Node3"]
+# PoW Function
+def proof_of_work(last_proof, difficulty=4):
+ proof = 0
+ start_time = time.time()
+ while True:
+ hash_result = hashlib.sha256(f"{last_proof}{proof}".encode()).hexdigest()
+ if hash_result[:difficulty] == "0" * difficulty: # Condition for valid block
+Page | 29
+ end_time = time.time()
+ return proof, hash_result, end_time - start_time
+ proof += 1
+# Running PoW Simulation
+last_proof = 0
+for node in nodes:
+ print(f"\n{node} is mining...")
+ proof, block_hash, time_taken = proof_of_work(last_proof)
+ print(f"{node} found proof: {proof}")
+ print(f"Block Hash: {block_hash}")
+ print(f"Time Taken: {time_taken:.2f} seconds")
+ last_proof = proof # Update last proof for next round
 
-class Block:
-    def __init__(self, index, previous_hash, timestamp, data, hash):
-        self.index = index
-        self.previous_hash = previous_hash
-        self.timestamp = timestamp
-        self.data = data
-        self.hash = hash
+‐------------
 
-    def __str__(self):
-        return f"Block {self.index} [Hash: {self.hash[:10]}...] -> Data: {self.data}"
 
-def calculate_hash(index, previous_hash, timestamp, data):
-    block_content = f"{index}{previous_hash}{timestamp}{data}"
-    return hashlib.sha256(block_content.encode()).hexdigest()
-
-def create_genesis_block():
-    ts = int(time.time())
-    # Fixed the multi-line string and timing consistency
-    genesis_hash = calculate_hash(0, "0", ts, "Genesis Block")
-    return Block(0, "0", ts, "Genesis Block", genesis_hash)
-
-def create_new_block(previous_block, data):
-    index = previous_block.index + 1
-    timestamp = int(time.time())
-    hash_value = calculate_hash(index, previous_block.hash, timestamp, data)
-    return Block(index, previous_block.hash, timestamp, data, hash_value)
-
-class Blockchain:
-    def __init__(self):
-        self.chain = [create_genesis_block()]
-
-    def add_block(self, data):
-        previous_block = self.chain[-1]
-        new_block = create_new_block(previous_block, data)
-        self.chain.append(new_block)
-
-    def display_chain(self):
-        for block in self.chain:
-            print(block)
-
-# Running the code
-blockchain = Blockchain()
-blockchain.add_block("Sensor data 1")
-blockchain.add_block("Sensor data 2")
-blockchain.display_chain()
+# Simulating stakes (IoT nodes with different stakes)
+stakes = {
+ "Node1": 5, # Lower stake
+ "Node2": 20, # Higher stake
+ "Node3": 10 # Medium stake
+}
+def select_validator(stakes):
+ total_stake = sum(stakes.values())
+ choice = random.uniform(0, total_stake)
+ cumulative = 0
+ 
+ for node, stake in stakes.items():
+ cumulative += stake
+ if choice <= cumulative:
+ return node
+# Running PoS Simulation
+for _ in range(5): # Simulate 5 block validations
+ validator = select_validator(stakes)
+ print(f"Block validated by: {validator}")
